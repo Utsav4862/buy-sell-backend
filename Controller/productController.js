@@ -78,7 +78,9 @@ const addProduct = async (req, res) => {
 };
 
 const fetchProducts = async (req, res) => {
-  let all = await Product.find().sort({ updatedAt: -1 });
+  let all = await Product.find()
+    .populate("user", "-password")
+    .sort({ updatedAt: -1 });
   res.send(all);
 };
 
@@ -95,7 +97,17 @@ const searchProducts = async (req, res) => {
         ],
       }
     : {};
-  let prod = await Product.find(keyword).sort({ updatedAt: -1 });
+
+  const keyword2 = req.query.location
+    ? { location: { $regex: req.query.location, $options: "i" } }
+    : {};
+  console.log(keyword2);
+  let prod;
+  if (req.query.location == "") {
+    prod = await Product.find(keyword).sort({ updatedAt: -1 });
+  } else {
+    prod = await Product.find(keyword).find(keyword2).sort({ updatedAt: -1 });
+  }
   console.log(prod);
   res.send(prod);
 };
