@@ -1,4 +1,5 @@
 const express = require("express");
+const { default: mongoose } = require("mongoose");
 const app = express();
 app.use(express.json());
 
@@ -80,7 +81,7 @@ const addProduct = async (req, res) => {
 const fetchProducts = async (req, res) => {
   let all = await Product.find()
     .populate("user", "-password")
-    .sort({ updatedAt: -1 });
+    .sort({ createdAt: -1 });
   res.send(all);
 };
 
@@ -104,9 +105,14 @@ const searchProducts = async (req, res) => {
   console.log(keyword2);
   let prod;
   if (req.query.location == "") {
-    prod = await Product.find(keyword).sort({ updatedAt: -1 });
+    prod = await Product.find(keyword)
+      .populate("user", "-password")
+      .sort({ createdAt: -1 });
   } else {
-    prod = await Product.find(keyword).find(keyword2).sort({ updatedAt: -1 });
+    prod = await Product.find(keyword)
+      .find(keyword2)
+      .populate("user", "-password")
+      .sort({ createdAt: -1 });
   }
   console.log(prod);
   res.send(prod);
@@ -125,10 +131,65 @@ const myProducts = async (req, res) => {
   res.send(products);
 };
 
+const likeProduct = async (req, res) => {
+  const user = await req.user;
+  console.log(req.body);
+  Product.findByIdAndUpdate(
+    req.body.productId,
+    {
+      $push: { likes: req.user._id },
+    },
+    {
+      new: true,
+    }
+  ).exec((err, result) => {
+    if (err) console.log(err);
+    else {
+      console.log(result);
+      res.send(result);
+    }
+  });
+};
+
+const unLikeProduct = async (req, res) => {
+  // var ObjectId = require("mongodb").ObjectID;
+  const user = await req.user;
+  console.log(req.body);
+  // let id = await new mongoose.Types.ObjectId(req.body.productId);
+  let resp = Product.findByIdAndUpdate(
+    req.body.productId,
+    {
+      $pull: { likes: user._id },
+    },
+    {
+      new: true,
+    }
+  ).exec((err, resp) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log(resp);
+    res.send(resp);
+  });
+};
+
+const likedProducts = async (req, res) => {
+  const user = req.user;
+  let products = await Product.find({
+    likes: { $elemMatch: { $eq: user._id } },
+  }).populate("user", "-password");
+
+  res.send(products);
+};
+
 module.exports = {
   addProduct,
   fetchProducts,
   searchProducts,
   findByCategory,
   myProducts,
+  likeProduct,
+  unLikeProduct,
+  likedProducts,
 };

@@ -9,7 +9,6 @@ const userSchema = new mongoose.Schema({
     default:
       "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
   },
-  otp: String,
 });
 
 module.exports = mongoose.model("User", userSchema);

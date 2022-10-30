@@ -17,6 +17,7 @@ const productSchema = new mongoose.Schema(
     images: [String],
     price: Number,
     location: String,
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );

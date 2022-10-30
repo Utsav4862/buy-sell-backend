@@ -28,12 +28,6 @@ const signUp = async (req, res) => {
     res.send({ error: "User Already Exists !!! " });
     return;
   }
-  // const otp = otpGenerator.generate(4, {
-  //   upperCaseAlphabets: false,
-  //   specialChars: false,
-  //   lowerCaseAlphabets: false,
-  //   digits: true,
-  // });
   let encryptedPassword = await bcrypt.hash(password, 10);
   let user = await User.create({
     name,
@@ -43,7 +37,7 @@ const signUp = async (req, res) => {
   });
   // let resp = await sendVerificationEmail(email, otp);
   // console.log(resp);
-  res.send({ user: user });
+  res.send({ success: true, user: user });
 };
 
 const login = async (req, res) => {
@@ -63,12 +57,25 @@ const login = async (req, res) => {
   }
 };
 
-const sendVerificationEmail = async (email, otp) => {
+const sendVerificationEmail = async (req, res) => {
+  let exist = await User.exists({ email: req.body.email });
+  const { name, email } = req.body;
+  console.log(exist);
+  if (exist) {
+    res.send({ error: "User Already Exists !!! " });
+    return;
+  }
+  const otp = otpGenerator.generate(4, {
+    upperCaseAlphabets: false,
+    specialChars: false,
+    lowerCaseAlphabets: false,
+    digits: true,
+  });
   console.log(otp);
   let mailOptions = {
     from: "utsavdholiya48@gmail.com",
-    to: email,
-    subject: "test",
+    to: req.body.email,
+    subject: "Email Verification OTP",
     html: `
     <div
       class="container"
@@ -85,10 +92,11 @@ const sendVerificationEmail = async (email, otp) => {
   let resp = await transporter.sendMail(mailOptions, (err, info) => {
     if (err) {
       console.log(err);
+      res.send({ error: "Error" });
     } else {
       console.log(info.response);
+      res.send({ success: true, otp: otp });
       return info.response;
-      // res.send(info.response);
     }
   });
 };
