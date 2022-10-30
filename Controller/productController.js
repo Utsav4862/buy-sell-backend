@@ -142,13 +142,15 @@ const likeProduct = async (req, res) => {
     {
       new: true,
     }
-  ).exec((err, result) => {
-    if (err) console.log(err);
-    else {
-      console.log(result);
-      res.send(result);
-    }
-  });
+  )
+    .populate("user", "-password")
+    .exec((err, result) => {
+      if (err) console.log(err);
+      else {
+        console.log(result);
+        res.send(result);
+      }
+    });
 };
 
 const unLikeProduct = async (req, res) => {
@@ -164,14 +166,16 @@ const unLikeProduct = async (req, res) => {
     {
       new: true,
     }
-  ).exec((err, resp) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    console.log(resp);
-    res.send(resp);
-  });
+  )
+    .populate("user", "-password")
+    .exec((err, resp) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      console.log(resp);
+      res.send(resp);
+    });
 };
 
 const likedProducts = async (req, res) => {

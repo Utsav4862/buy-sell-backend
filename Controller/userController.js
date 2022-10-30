@@ -35,8 +35,7 @@ const signUp = async (req, res) => {
     password: encryptedPassword,
     // otp,
   });
-  // let resp = await sendVerificationEmail(email, otp);
-  // console.log(resp);
+
   res.send({ success: true, user: user });
 };
 
