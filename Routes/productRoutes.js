@@ -8,6 +8,7 @@ const {
   likeProduct,
   unLikeProduct,
   likedProducts,
+  deleteProduct,
 } = require("../Controller/productController");
 
 const { auth } = require("../Middleware/auth");
@@ -23,5 +24,6 @@ router.get("/myProducts", auth, myProducts);
 router.put("/like", auth, likeProduct);
 router.put("/unlike", auth, unLikeProduct);
 router.get("/likedProd", auth, likedProducts);
+router.delete("/delete/:productId", auth, deleteProduct);
 
 module.exports = router;

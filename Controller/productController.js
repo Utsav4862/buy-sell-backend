@@ -4,6 +4,7 @@ const app = express();
 app.use(express.json());
 
 const Product = require("../Model/Product");
+const Chat = require("../Model/Chat");
 
 const addProduct = async (req, res) => {
   let user = await req.user;
@@ -127,8 +128,21 @@ const findByCategory = async (req, res) => {
 
 const myProducts = async (req, res) => {
   const user = await req.user;
-  let products = await Product.find({ user: user._id });
+  let products = await Product.find({ user: user._id }).populate(
+    "user",
+    "-password"
+  );
   res.send(products);
+};
+
+const deleteProduct = async (req, res) => {
+  let user = await req.user;
+  let { productId } = req.params;
+  await Chat.deleteMany({
+    product: productId,
+  });
+  let resp = await Product.findByIdAndDelete(productId);
+  res.send(resp);
 };
 
 const likeProduct = async (req, res) => {
@@ -154,10 +168,9 @@ const likeProduct = async (req, res) => {
 };
 
 const unLikeProduct = async (req, res) => {
-  // var ObjectId = require("mongodb").ObjectID;
   const user = await req.user;
   console.log(req.body);
-  // let id = await new mongoose.Types.ObjectId(req.body.productId);
+
   let resp = Product.findByIdAndUpdate(
     req.body.productId,
     {
@@ -196,4 +209,5 @@ module.exports = {
   likeProduct,
   unLikeProduct,
   likedProducts,
+  deleteProduct,
 };
