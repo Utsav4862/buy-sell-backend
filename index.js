@@ -16,7 +16,7 @@ app.use(
   })
 );
 
-const routes = require("./routes/index");
+const routes = require("./Routes/main");
 app.use(cors());
 app.use(express.json());
 app.use(express.static("uploads"));
