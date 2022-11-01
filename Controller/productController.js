@@ -149,10 +149,9 @@ const findByCategory = async (req, res) => {
 const myProducts = async (req, res) => {
   try {
     const user = await req.user;
-    let products = await Product.find({ user: user._id }).populate(
-      "user",
-      "-password"
-    );
+    let products = await Product.find({ user: user._id })
+      .populate("user", "-password")
+      .sort({ createdAt: -1 });
     res.send(products);
   } catch (error) {
     throw new Error(error.message);
@@ -232,7 +231,9 @@ const likedProducts = async (req, res) => {
     const user = req.user;
     let products = await Product.find({
       likes: { $elemMatch: { $eq: user._id } },
-    }).populate("user", "-password");
+    })
+      .populate("user", "-password")
+      .sort({ updatedAt: -1 });
 
     res.send(products);
   } catch (error) {
