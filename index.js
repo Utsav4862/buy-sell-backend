@@ -21,7 +21,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("uploads"));
 app.use("/api", routes);
-const server = app.listen(5555);
+const server = app.listen(process.env.PORT || 5555);
 
 const io = require("socket.io")(server, {
   cors: "*",
