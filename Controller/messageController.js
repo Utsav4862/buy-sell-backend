@@ -17,9 +17,9 @@ const allMessages = async (req, res) => {
 
 const sendMessage = async (req, res) => {
   const { content, chatId } = req.body;
-
+  console.log(req.body);
   if (!content || !chatId) {
-    console.log("Invalid data passed into request");
+    console.log("Invalid data");
     return res.sendStatus(400);
   }
 
@@ -36,7 +36,6 @@ const sendMessage = async (req, res) => {
     message = await message.populate("chat");
     message = await User.populate(message, {
       path: "chat.users",
-      select: "name pic email",
     });
 
     await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: message });

@@ -74,16 +74,16 @@ const fetchChats = async (req, res) => {
       .populate("latestMessage")
       .populate("product")
       .sort({ updatedAt: -1 })
-      .then(async (results) => {
-        results = await User.populate(results, {
+      .then(async (resp) => {
+        resp = await User.populate(resp, {
           path: "latestMessage.sender",
           select: "name pic email",
         });
 
-        results = await Product.populate(results, {
+        resp = await Product.populate(resp, {
           path: "product.user",
         });
-        res.status(200).send(results);
+        res.send(resp);
       });
   } catch (error) {
     res.status(400);

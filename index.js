@@ -21,7 +21,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("uploads"));
 app.use("/api", routes);
-const ws = require("ws");
 const server = app.listen(5555);
 
 const io = require("socket.io")(server, {
@@ -51,9 +50,4 @@ io.on("connection", (socket) => {
       socket.in(user._id).emit("message received", newMessageReceived);
     });
   });
-
-  // socket.off("setup", () => {
-  //   console.log("USER DISCONNECTED");
-  //   socket.leave(userData._id);
-  // });
 });

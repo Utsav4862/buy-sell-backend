@@ -22,5 +22,4 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-productSchema.plugin(require("mongoose-autopopulate"));
 module.exports = mongoose.model("Product", productSchema);
