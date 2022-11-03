@@ -98,6 +98,7 @@ const fetchProducts = async (req, res) => {
     let all = await Product.find()
       .populate("user", "-password")
       .sort({ createdAt: -1 });
+    console.log(all);
     res.send(all);
   } catch (error) {
     throw new Error(error.message);
