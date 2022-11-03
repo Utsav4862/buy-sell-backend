@@ -7,5 +7,5 @@ cloudinary.config({
   secure: true,
 });
 
-exports.cloudinaryUpload = (file) =>
-  cloudinary.uploader.upload(file, { folder: "Images" });
+exports.cloudinaryUpload = async (file) =>
+  await cloudinary.uploader.upload(file, { folder: "Images" });

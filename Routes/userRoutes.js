@@ -16,6 +16,6 @@ router.post("/signup", signUp);
 router.post("/login", login);
 router.get("/currentUser", auth, getCurrentUser);
 router.post("/sendEmail", sendVerificationEmail);
-router.post("/updateImage", auth, multerSt, updateImage);
+router.put("/updateImage", auth, multerSt, updateImage);
 
 module.exports = router;

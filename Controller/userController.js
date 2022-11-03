@@ -126,16 +126,19 @@ const getCurrentUser = async (req, res) => {
 const updateImage = async (req, res) => {
   try {
     let user = await req.user;
-
-    let image = req.files[0];
+    let img = req.files;
+    console.log(img);
+    let image = await req.files[0];
     let resp = await cloudinary.cloudinaryUpload(image.path);
     console.log(resp.secure_url);
     await User.findByIdAndUpdate(user._id, {
       profile_img: resp.secure_url,
     });
-    await unlinkAsync(image.path);
-    await res.send(resp.secure_url);
-  } catch (error) {}
+    res.send(resp.secure_url);
+    // await unlinkAsync(image.path);
+  } catch (error) {
+    console.log(error);
+  }
 };
 module.exports = {
   signUp,
