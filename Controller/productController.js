@@ -86,7 +86,7 @@ const addProduct = async (req, res) => {
         user: user._id,
       });
     }
-
+    console.log(resp, "resp");
     res.send(resp);
   } catch (error) {
     console.log(error);
