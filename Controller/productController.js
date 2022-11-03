@@ -2,25 +2,31 @@ const express = require("express");
 const { default: mongoose } = require("mongoose");
 const app = express();
 app.use(express.json());
-// const fs = require("fs");
+const fs = require("fs");
 const { promisify } = require("util");
 const Product = require("../Model/Product");
 const Chat = require("../Model/Chat");
 
-// const unlinkAsync = promisify(fs.unlink);
+const cloudinary = require("../cloudinary");
+
+const unlinkAsync = promisify(fs.unlink);
 const addProduct = async (req, res) => {
   try {
     let user = await req.user;
 
-    console.log(user);
+    let files = await req.files;
+    console.log(files);
+
     const url = (await req.protocol) + "://" + req.get("host");
     let images = [];
-    let files = await req.files;
+
     for (let e of files) {
-      images.push(url + "/" + e.filename);
+      let result = await cloudinary.cloudinaryUpload(e.path);
+      images.push(result.secure_url);
+      await unlinkAsync(e.path);
     }
 
-    console.log(images, "heyy");
+    // console.log(images, "heyy");
     let { category } = await req.body;
 
     let resp;

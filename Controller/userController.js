@@ -7,7 +7,10 @@ const User = require("../Model/User");
 const nodemailer = require("nodemailer");
 const key = "Buy-Sell";
 var otpGenerator = require("otp-generator");
-
+const cloudinary = require("../cloudinary");
+const fs = require("fs");
+const { promisify } = require("util");
+const unlinkAsync = promisify(fs.unlink);
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
@@ -120,4 +123,24 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
-module.exports = { signUp, login, getCurrentUser, sendVerificationEmail };
+const updateImage = async (req, res) => {
+  try {
+    let user = await req.user;
+
+    let image = req.files[0];
+    let resp = await cloudinary.cloudinaryUpload(image.path);
+    console.log(resp.secure_url);
+    await User.findByIdAndUpdate(user._id, {
+      profile_img: resp.secure_url,
+    });
+    await unlinkAsync(image.path);
+    await res.send(resp.secure_url);
+  } catch (error) {}
+};
+module.exports = {
+  signUp,
+  login,
+  getCurrentUser,
+  sendVerificationEmail,
+  updateImage,
+};

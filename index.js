@@ -1,12 +1,12 @@
 const express = require("express");
+require("dotenv").config({ path: ".env" });
 require("./config");
 
 const cors = require("cors");
 const app = express();
-
 app.use(express.json());
 const jwt = require("jsonwebtoken");
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5555;
 const bodyParser = require("body-parser");
 app.use(
   bodyParser.urlencoded({
