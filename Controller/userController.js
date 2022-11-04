@@ -108,7 +108,7 @@ const sendVerificationEmail = async (req, res) => {
     }
 
     let mailOptions = {
-      from: "utsavdholiya48@gmail.com",
+      from: process.env.EMAIL,
       to: req.body.email,
       subject: "Email Verification OTP",
       html: `
