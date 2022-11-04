@@ -25,7 +25,6 @@ let transporter = nodemailer.createTransport({
 
 const signUp = async (req, res) => {
   try {
-    console.log(req.body);
     let exist = await User.exists({ email: req.body.email });
     const { name, email, password } = req.body;
 
@@ -68,10 +67,9 @@ const login = async (req, res) => {
 };
 
 const verify = async (req, res) => {
-  console.log(req.body);
   const { email, otp } = req.body;
   const user = await Otp.findOne({ email: email });
-  console.log(user);
+
   if (user) {
     if (user.otp == otp) {
       res.send({ success: true });
@@ -87,7 +85,7 @@ const sendVerificationEmail = async (req, res) => {
   try {
     let exist = await User.exists({ email: req.body.email });
     const { name, email } = req.body;
-    console.log(exist);
+
     if (exist) {
       res.send({ error: "User Already Exists !!! " });
       return;
@@ -98,7 +96,6 @@ const sendVerificationEmail = async (req, res) => {
       lowerCaseAlphabets: false,
       digits: true,
     });
-    console.log(otp);
 
     let user = await Otp.findOne({ email: email });
     if (user) {
@@ -132,7 +129,6 @@ const sendVerificationEmail = async (req, res) => {
         console.log(err);
         res.send({ error: "Error" });
       } else {
-        console.log(info.response);
         res.send({ success: true });
         return info.response;
       }
@@ -155,10 +151,10 @@ const updateImage = async (req, res) => {
   try {
     let user = await req.user;
     let img = req.files;
-    console.log(img);
+    img;
     let image = await req.files[0];
     let resp = await cloudinary.cloudinaryUpload(image.path);
-    console.log(resp.secure_url);
+
     await User.findByIdAndUpdate(user._id, {
       profile_img: resp.secure_url,
     });

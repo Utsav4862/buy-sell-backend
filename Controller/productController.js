@@ -15,7 +15,6 @@ const addProduct = async (req, res) => {
     let user = await req.user;
 
     let files = await req.files;
-    console.log(files);
 
     const url = (await req.protocol) + "://" + req.get("host");
     let images = [];
@@ -98,7 +97,7 @@ const fetchProducts = async (req, res) => {
     let all = await Product.find()
       .populate("user", "-password")
       .sort({ createdAt: -1 });
-    console.log(all);
+
     res.send(all);
   } catch (error) {
     throw new Error(error.message);
@@ -123,7 +122,7 @@ const searchProducts = async (req, res) => {
     const keyword2 = req.query.location
       ? { location: { $regex: req.query.location, $options: "i" } }
       : {};
-    console.log(keyword2);
+
     let prod;
     if (req.query.location == "") {
       prod = await Product.find(keyword)
@@ -135,7 +134,7 @@ const searchProducts = async (req, res) => {
         .populate("user", "-password")
         .sort({ createdAt: -1 });
     }
-    console.log(prod);
+
     res.send(prod);
   } catch (error) {
     throw new Error(error.message);
@@ -182,7 +181,7 @@ const deleteProduct = async (req, res) => {
 const likeProduct = async (req, res) => {
   try {
     const user = await req.user;
-    console.log(req.body);
+
     Product.findByIdAndUpdate(
       req.body.productId,
       {
@@ -196,7 +195,6 @@ const likeProduct = async (req, res) => {
       .exec((err, result) => {
         if (err) console.log(err);
         else {
-          console.log(result);
           res.send(result);
         }
       });
@@ -208,7 +206,6 @@ const likeProduct = async (req, res) => {
 const unLikeProduct = async (req, res) => {
   try {
     const user = await req.user;
-    console.log(req.body);
 
     let resp = Product.findByIdAndUpdate(
       req.body.productId,
@@ -225,7 +222,7 @@ const unLikeProduct = async (req, res) => {
           console.error(err);
           return;
         }
-        console.log(resp);
+
         res.send(resp);
       });
   } catch (error) {

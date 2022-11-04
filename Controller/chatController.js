@@ -4,7 +4,6 @@ const User = require("../Model/User");
 
 const accessChat = async (req, res) => {
   const { userId, productId } = req.body;
-  console.log();
 
   if (!userId || !productId) {
     console.log("UserId param not sent with request");
@@ -58,7 +57,7 @@ const accessChat = async (req, res) => {
         path: "product.user",
         select: "name pic email",
       });
-      console.log("created");
+
       res.status(200).json(FullChat);
     } catch (error) {
       res.status(400);
