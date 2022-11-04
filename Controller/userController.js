@@ -10,6 +10,7 @@ var otpGenerator = require("otp-generator");
 const cloudinary = require("../cloudinary");
 const fs = require("fs");
 const { promisify } = require("util");
+const Otp = require("../Model/Otp");
 const unlinkAsync = promisify(fs.unlink);
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -27,7 +28,7 @@ const signUp = async (req, res) => {
     console.log(req.body);
     let exist = await User.exists({ email: req.body.email });
     const { name, email, password } = req.body;
-    console.log(exist);
+
     if (exist) {
       res.send({ error: "User Already Exists !!! " });
       return;
@@ -66,6 +67,22 @@ const login = async (req, res) => {
   }
 };
 
+const verify = async (req, res) => {
+  console.log(req.body);
+  const { email, otp } = req.body;
+  const user = await Otp.findOne({ email: email });
+  console.log(user);
+  if (user) {
+    if (user.otp == otp) {
+      res.send({ success: true });
+    } else {
+      res.send({ error: "otp is Wrong" });
+    }
+  } else {
+    res.send({ error: "wrong email" });
+  }
+};
+
 const sendVerificationEmail = async (req, res) => {
   try {
     let exist = await User.exists({ email: req.body.email });
@@ -82,6 +99,17 @@ const sendVerificationEmail = async (req, res) => {
       digits: true,
     });
     console.log(otp);
+
+    let user = await Otp.findOne({ email: email });
+    if (user) {
+      await Otp.findByIdAndUpdate(user._id, {
+        otp: otp,
+      });
+    } else {
+      let newOtp = await Otp.create({ email: email, otp: otp });
+      await newOtp.save();
+    }
+
     let mailOptions = {
       from: "utsavdholiya48@gmail.com",
       to: req.body.email,
@@ -105,7 +133,7 @@ const sendVerificationEmail = async (req, res) => {
         res.send({ error: "Error" });
       } else {
         console.log(info.response);
-        res.send({ success: true, otp: otp });
+        res.send({ success: true });
         return info.response;
       }
     });
@@ -146,4 +174,5 @@ module.exports = {
   getCurrentUser,
   sendVerificationEmail,
   updateImage,
+  verify,
 };
