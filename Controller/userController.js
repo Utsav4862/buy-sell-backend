@@ -134,8 +134,8 @@ const updateImage = async (req, res) => {
     await User.findByIdAndUpdate(user._id, {
       profile_img: resp.secure_url,
     });
+    await unlinkAsync(image.path);
     res.send(resp.secure_url);
-    // await unlinkAsync(image.path);
   } catch (error) {
     console.log(error);
   }
