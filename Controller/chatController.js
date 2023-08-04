@@ -42,7 +42,6 @@ const accessChat = async (req, res) => {
     console.log("exist");
   } else {
     var chatData = {
-      chatName: "sender",
       users: [req.user._id, userId],
       product: productId,
     };
