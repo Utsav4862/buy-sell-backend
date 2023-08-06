@@ -6,7 +6,7 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 const jwt = require("jsonwebtoken");
-const port = process.env.PORT || 5555;
+const port = process.env.PORT || 5550;
 const bodyParser = require("body-parser");
 app.use(
   bodyParser.urlencoded({
